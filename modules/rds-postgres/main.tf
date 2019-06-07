@@ -1,7 +1,7 @@
 # Create security group for Postgres RDS
 # Source: https://www.terraform.io/docs/providers/aws/r/security_group.html
 resource "aws_security_group" "postgres" {
-  name        = "postgres"
+  name        = "${var.aws_client_tag}-postgres"
   description = "Allow all inbound Postgres traffic"
   vpc_id      = "${var.vpc_id}"
 
@@ -10,38 +10,23 @@ resource "aws_security_group" "postgres" {
     to_port     = 5432
     protocol    = "tcp"
     self        = true
-    description = "Postgres access"
+    description = "Postgres access from self."
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags {
-    Name = "Spoke Postgres"
+    Name               = "${var.client_name_friendly} Spoke Postgres"
+    "user:client"      = "${var.aws_client_tag}"
+    "user:stack"       = "${var.aws_stack_tag}"
+    "user:application" = "spoke"
   }
 }
-
-
-# Create security group rule
-# Source: https://www.terraform.io/docs/providers/aws/r/security_group_rule.html
-resource "aws_security_group_rule" "allow_all_postgres" {
-  # Only create rule if publicly accessible
-  count       = "${var.publicly_accessible}"
-
-  type        = "ingress"
-  from_port   = 5432
-  to_port     = 5432
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
-  description = "Postgres traffic from anywhere"
-
-  security_group_id = "${aws_security_group.postgres.id}"
-}
-
 
 # Create RDS Subnet Group
 # Source: https://www.terraform.io/docs/providers/aws/r/db_subnet_group.html
@@ -50,29 +35,56 @@ resource "aws_db_subnet_group" "postgres" {
   subnet_ids = ["${var.subnet_ids}"]
 
   tags {
-    Name = "Spoke Postgres"
+    Name               = "${var.client_name_friendly} Spoke Postgres"
+    "user:client"      = "${var.aws_client_tag}"
+    "user:stack"       = "${var.aws_stack_tag}"
+    "user:application" = "spoke"
   }
 }
 
-
-
-# Create RDS Postgres instance
-# Source: https://www.terraform.io/docs/providers/aws/r/db_instance.html
-resource "aws_db_instance" "spoke" {
-  identifier             = "${var.rds_identifier}"
-  allocated_storage      = "${var.rds_size}"
-  storage_type           = "gp2"
-  engine                 = "postgres"
-  engine_version         = "10.4"
-  instance_class         = "${var.rds_class}"
-  name                   = "${var.rds_dbname}"
-  port                   = "${var.rds_port}"
-  username               = "${var.rds_username}"
-  password               = "${var.rds_password}"
-  option_group_name      = "default:postgres-10"
-  parameter_group_name   = "default.postgres10"
-  publicly_accessible    = true
-  skip_final_snapshot    = true
+# Create Serverless Postgres cluster
+# Source: https://www.terraform.io/docs/providers/aws/r/rds_cluster.html
+resource "aws_rds_cluster" "spoke" {
+  cluster_identifier     = "${var.aws_client_tag}-spokedb"
+  engine                 = "aurora-postgresql"
+  engine_mode            = "serverless"
   db_subnet_group_name   = "${aws_db_subnet_group.postgres.name}"
   vpc_security_group_ids = ["${aws_security_group.postgres.id}"]
+  copy_tags_to_snapshot  = true
+  storage_encrypted      = true
+
+  # TODO - Unsure of what to set these to for PostgreSQL Serverless
+  # engine_version                  = ""
+  # db_cluster_parameter_group_name = ""
+
+  database_name   = "${var.rds_dbname}"
+  master_username = "${var.rds_username}"
+  master_password = "${var.rds_password}"
+
+  # Deletion Behavior
+
+  deletion_protection       = true
+  skip_final_snapshot       = false
+  final_snapshot_identifier = "${var.aws_client_tag}-spokedb-final-snapshot"
+
+  # Maintenance
+
+  # enabled_cloudwatch_logs_exports = ["slowquery"]    # Not supported by Aurora Serverless at the moment
+  backup_retention_period      = 5
+  preferred_backup_window      = "06:00-11:00"         # UTC
+  preferred_maintenance_window = "sat:05:00-sat:05:30" # UTC
+
+  # Scaling configuration
+
+  scaling_configuration {
+    auto_pause   = false
+    min_capacity = "${var.rds_min_capacity}"
+    max_capacity = "${var.rds_max_capacity}"
+  }
+  tags {
+    Name               = "${var.client_name_friendly} Spoke Postgres"
+    "user:client"      = "${var.aws_client_tag}"
+    "user:stack"       = "${var.aws_stack_tag}"
+    "user:application" = "spoke"
+  }
 }

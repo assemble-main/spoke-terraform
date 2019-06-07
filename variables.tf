@@ -4,25 +4,67 @@
 # 
 # Source: https://www.terraform.io/intro/getting-started/variables.html
 
-
-########################
-# AWS Deploy Variables #
-########################
-
-variable "aws_access_key" {
-  description = "AWS Access Key."
+variable "client_name_friendly" {
+  type        = "string"
+  description = "Human-readable client name to use in resource Name tags."
 }
 
-variable "aws_secret_key" {
-  description = "AWS Secret Key."
-}
+# #######################
+# AWS Variables
+# #######################
+
+# -----------------------
+# General
+# -----------------------
 
 variable "aws_region" {
+  type        = "string"
   description = "AWS region to launch servers. Ex. us-east-1"
+  default     = "us-east-2"
 }
 
+variable "base_domain" {
+  type        = "string"
+  description = "The base domain that Spoke components will be running on. Ex. spoke.client.politicsrewired.dev"
+}
+
+# -----------------------
+# Billing
+# -----------------------
+
+variable "aws_client_tag" {
+  type        = "string"
+  description = "The value for AWS cost allocation tag `user:client`."
+}
+
+variable "aws_stack_tag" {
+  type        = "string"
+  description = "The value for AWS cost allocation tag `user:stack`."
+  default     = "production"
+}
+
+# -----------------------
+# S3
+# -----------------------
+
 variable "s3_bucket_name" {
+  type        = "string"
   description = "Create a globally unique S3 bucket. Usually the same as spoke_domain: spoke.example.com"
+}
+
+# -----------------------
+# RDS
+# -----------------------
+
+variable "rds_dbname" {
+  type        = "string"
+  description = "The DB name for the Postgres instance."
+  default     = "spoke"
+}
+
+variable "rds_username" {
+  type        = "string"
+  description = "The username for the Postgres instance."
 }
 
 variable "rds_password" {
@@ -30,23 +72,25 @@ variable "rds_password" {
   description = "The password for the Postgres instance user."
 }
 
-variable "server_bundle_location" {
-  description = "Path of packed server.zip"
+variable "rds_min_capacity" {
+  type        = "string"
+  description = "Minimum ACU count for PostgreSQL database."
+  default     = 8
 }
 
-variable "client_bundle_location" {
-  description = "Path of compiled bundle.[hash].js"
+variable "rds_max_capacity" {
+  type        = "string"
+  description = "Minimum ACU count for PostgreSQL database."
+  default     = 256
 }
 
-variable "client_bundle_hash" {
-  description = "Hash of client bundle.js."
-}
+# ###########################
+# Spoke Environment Variables
+# ###########################
 
 # -----------------------
-# Spoke Variables
+# General Spoke
 # -----------------------
-
-# Spoke
 
 variable "spoke_domain" {
   type        = "string"
@@ -82,8 +126,9 @@ variable "spoke_lambda_debug" {
   default     = "0"
 }
 
-
-# SMS
+# -----------------------
+# SMS Providers
+# -----------------------
 
 variable "spoke_default_service" {
   type        = "string"
@@ -125,8 +170,9 @@ variable "spoke_nexmo_api_secret" {
   default     = ""
 }
 
-
+# -----------------------
 # Auth0
+# -----------------------
 
 variable "spoke_auth0_domain" {
   type        = "string"
@@ -146,8 +192,9 @@ variable "spoke_auth0_client_secret" {
   default     = ""
 }
 
-
+# -----------------------
 # Email
+# -----------------------
 
 ## SMTP
 
@@ -225,8 +272,9 @@ variable "spoke_mailgun_smtp_server" {
   default     = "smtp.mailgun.org"
 }
 
-
+# -----------------------
 # Action Handlers
+# -----------------------
 
 variable "spoke_action_handlers" {
   type        = "string"
@@ -248,8 +296,9 @@ variable "spoke_ak_secret" {
   default     = ""
 }
 
-
+# -----------------------
 # Rollbar
+# -----------------------
 
 variable "spoke_rollbar_client_token" {
   type        = "string"

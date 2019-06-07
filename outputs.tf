@@ -5,22 +5,27 @@
 # 
 # Source: https://www.terraform.io/intro/getting-started/outputs.html
 
-output "rds_host_address" {
-  description = "RDS Host Address"
-  value       = "${module.postgres.address}"
+output "endpoint" {
+  description = "Aurora PostgreSQL DNS endpoint."
+  value       = "${module.postgres.endpoint}"
 }
 
-output "api_url" {
-  description = "Base API Gateway URL. Needed to set DNS record."
-  value       = "${module.api_gateway.gateway_url}"
+output "reader_endpoint" {
+  description = "Aurora PostgreSQL DNS read-only endpoint."
+  value       = "${module.postgres.reader_endpoint}"
 }
 
-output "bundle_hash" {
-  description = "The bundle hash for ease of reployment without rebuilding source."
-  value       = "${var.client_bundle_hash}"
+output "port" {
+  description = "Aurora PostgreSQL port."
+  value       = "${module.postgres.port}"
 }
 
-output "s3_bucket_name" {
-  description = "S3 Bucket Name"
-  value       = "${var.spoke_domain}"
+output "database_name" {
+  description = "Aurora PostgreSQL database name."
+  value       = "${module.postgres.database_name}"
+}
+
+output "master_username" {
+  description = "Aurora PostgreSQL master username."
+  value       = "${module.postgres.master_username}"
 }

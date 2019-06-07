@@ -1,12 +1,26 @@
 # -----------------------
-# Lambda Function Variables
+# AWS Variables
 # -----------------------
 
-variable "fake_depends_on" {
-  type        = "list"
-  description = "https://github.com/hashicorp/terraform/issues/1178#issuecomment-105613781"
-  default     = []
+variable "client_name_friendly" {
+  type        = "string"
+  description = "Human-readable client name to use in resource Name tags."
 }
+
+variable "aws_client_tag" {
+  type        = "string"
+  description = "The value for AWS cost allocation tag `user:client`."
+}
+
+variable "aws_stack_tag" {
+  type        = "string"
+  description = "The value for AWS cost allocation tag `user:stack`."
+  default     = "production"
+}
+
+# -------------------------
+# Lambda Function Variables
+# -------------------------
 
 variable "aws_region" {
   type        = "string"
@@ -28,47 +42,27 @@ variable "s3_bucket_name" {
   description = "The name of the S3 bucket where the server bundle resides."
 }
 
-variable "s3_key" {
+variable "node_runtime" {
   type        = "string"
-  description = "S3 key of the server bundle."
+  description = "Node JS runtime version."
+  default     = "nodejs8.10"
 }
 
-variable "source_code_hash" {
+variable "func_memory_mb" {
   type        = "string"
-  description = "Hash of server bundle. Used to determine if source code has changed and function needs updating."
+  description = "Lambda function memory amount."
+  default     = "512"
 }
 
-# RDS
-
-variable "db_host" {
+variable "lambda_timeout_s" {
   type        = "string"
-  description = "The address of the Postgres instance."
+  description = "Lambda timeout in seconds."
+  default     = "300"
 }
 
-variable "db_port" {
-  type        = "string"
-  description = "The port the Postgres instance will listen on."
-}
-
-variable "db_name" {
-  type        = "string"
-  description = "The DB name for the Postgres instance."
-}
-
-variable "db_user" {
-  type        = "string"
-  description = "The username for the Postgres instance."
-}
-
-variable "db_password" {
-  type        = "string"
-  description = "The password for the Postgres instance user."
-}
-
-
-# -----------------------
-# Spoke Variables
-# -----------------------
+# ---------------------------
+# Spoke Environment Variables
+# ---------------------------
 
 # Spoke
 
@@ -107,6 +101,32 @@ variable "spoke_lambda_debug" {
   default     = "0"
 }
 
+# RDS
+
+variable "db_host" {
+  type        = "string"
+  description = "The address of the Postgres instance."
+}
+
+variable "db_port" {
+  type        = "string"
+  description = "The port the Postgres instance will listen on."
+}
+
+variable "db_name" {
+  type        = "string"
+  description = "The DB name for the Postgres instance."
+}
+
+variable "db_user" {
+  type        = "string"
+  description = "The username for the Postgres instance."
+}
+
+variable "db_password" {
+  type        = "string"
+  description = "The password for the Postgres instance user."
+}
 
 # SMS
 
@@ -150,8 +170,35 @@ variable "spoke_nexmo_api_secret" {
   default     = ""
 }
 
+# Authentication
 
-# Auth0
+variable "spoke_passport_strategy" {
+  type        = "string"
+  description = "Passport strategy to use."
+  default     = "auth0"
+}
+
+## Slack
+
+variable "spoke_slack_client_id" {
+  type        = "string"
+  description = "Slack client ID."
+  default     = ""
+}
+
+variable "spoke_slack_client_secret" {
+  type        = "string"
+  description = "Slack client secret."
+  default     = ""
+}
+
+variable "spoke_slack_team_name" {
+  type        = "string"
+  description = "Slack team name."
+  default     = ""
+}
+
+## Auth0
 
 variable "spoke_auth0_domain" {
   type        = "string"
@@ -170,7 +217,6 @@ variable "spoke_auth0_client_secret" {
   description = "Auth0 client secret."
   default     = ""
 }
-
 
 # Email
 
@@ -250,7 +296,6 @@ variable "spoke_mailgun_smtp_server" {
   default     = "smtp.mailgun.org"
 }
 
-
 # Action Handlers
 
 variable "spoke_action_handlers" {
@@ -273,7 +318,6 @@ variable "spoke_ak_secret" {
   default     = ""
 }
 
-
 # Rollbar
 
 variable "spoke_rollbar_client_token" {
@@ -286,4 +330,54 @@ variable "spoke_rollbar_endpoint" {
   type        = "string"
   description = "Rollbar endpoint."
   default     = "https://api.rollbar.com/api/1/item/"
+}
+
+# BernieSMS Integrations
+
+## External assignment integration -- outgoing
+
+variable "spoke_assignment_requested_token" {
+  type        = "string"
+  description = "Bearer token for outgoing assignment requests."
+  default     = ""
+}
+
+variable "spoke_assignment_requested_url" {
+  type        = "string"
+  description = "Initial outgoing assignment request."
+  default     = ""
+}
+
+variable "spoke_assignment_complete_url" {
+  type        = "string"
+  description = "URL to hit when campaign autoassignment completes."
+  default     = ""
+}
+
+## External assignment integration -- incoming
+
+variable "spoke_assignment_username" {
+  type        = "string"
+  description = "Basic authentication username for incoming assignment approval requests."
+  default     = ""
+}
+
+variable "spoke_assignment_password" {
+  type        = "string"
+  description = "Basic authentication password for incoming assignment approval requests."
+  default     = ""
+}
+
+## External bad word flag integration
+
+variable "spoke_bad_word_token" {
+  type        = "string"
+  description = "Bearer token for outgoing bad word notifications."
+  default     = ""
+}
+
+variable "spoke_bad_word_url" {
+  type        = "string"
+  description = "URL for outgoing bad word notifications."
+  default     = ""
 }

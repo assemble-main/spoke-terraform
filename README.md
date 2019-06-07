@@ -1,32 +1,44 @@
-# Usage
+# Spoke Terraform Module
+
+This module creates production stack infrastrucuture for Rewired hosted Spoke. It does _not_ deploy releases; that must be done manually using a script included in [`/bin`](#).
 
 ## Prerequisites
+
+The wildcard domain must be configured in AWS Certificates prior to deployment. This will be of the form `*.spoke.[client].politicsrewired.dev`.
+
+## Usage
+
+In a dedicated production management folder, create a `main.tf` Terraform file referencing this module:
+
+```
+provider "aws" {
+  access_key                    = "SomeAccessKey"
+  secret_key                    = "ExtraSuperSecret"
+  region                        = "us-east-2"
+}
+
+module "spoke" {
+  source  = "/path/to/spoke-terraform"
+}
+```
+
+The complete list of configuration options is available in [`variables.tf`](variables.tf).
+
+Initialize and Run Terraform
+
+```sh
+$ terraform init
+$ terraform apply
+```
+
+## Deploying Spoke Code
+
+**Prerequisites**
 
 You will need Claudia.js to package Spoke:
 
 ```sh
 $ npm install -g claudia
-```
-
-You will also need Terraform to provision AWS resources. See their [download page](https://www.terraform.io/downloads.html).
-
-## Deploying Spoke
-
-**Configuration**
-
-Copy and edit the example configuration variable declaration file:
-
-```sh
-$ cp ./terraform.tfvars.example ./terraform.tfvars
-$ vi ./terraform.tfvars
-```
-
-For most installations, this will be enough. For the complete list of configuration options, however, see [`variables.tf`](variables.tf).
-
-**Initialize Terraform**
-
-```sh
-$ terraform init
 ```
 
 **Run the build script**

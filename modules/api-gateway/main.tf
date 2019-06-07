@@ -1,10 +1,9 @@
 # Create API Gateway
 # Source: https://www.terraform.io/docs/providers/aws/r/api_gateway_rest_api.html
 resource "aws_api_gateway_rest_api" "spoke" {
-  name        = "SpokeAPIGateway"
-  description = "Spoke P2P Testing Platform"
+  name        = "${var.aws_client_tag}-SpokeAPIGateway"
+  description = "Spoke P2P Testing Platform for ${var.client_name_friendly}."
 }
-
 
 # Proxy path
 resource "aws_api_gateway_resource" "proxy" {
@@ -30,7 +29,6 @@ resource "aws_api_gateway_integration" "lambda" {
   uri                     = "${var.invoke_arn}"
 }
 
-
 # Root path
 resource "aws_api_gateway_method" "proxy_root" {
   rest_api_id   = "${aws_api_gateway_rest_api.spoke.id}"
@@ -49,7 +47,6 @@ resource "aws_api_gateway_integration" "lambda_root" {
   uri                     = "${var.invoke_arn}"
 }
 
-
 # Gateway Deployment - activate the above configuration
 resource "aws_api_gateway_deployment" "spoke" {
   depends_on = [
@@ -61,6 +58,19 @@ resource "aws_api_gateway_deployment" "spoke" {
   stage_name  = "latest"
 }
 
+# Create named stage with tags for Spoke
+# Source: https://www.terraform.io/docs/providers/aws/r/api_gateway_stage.html
+resource "aws_api_gateway_stage" "spoke_latest" {
+  stage_name    = "latest"
+  rest_api_id   = "${aws_api_gateway_rest_api.spoke.id}"
+  deployment_id = "${aws_api_gateway_deployment.spoke.id}"
+
+  tags {
+    "user:client"      = "${var.aws_client_tag}"
+    "user:stack"       = "${var.aws_stack_tag}"
+    "user:application" = "spoke"
+  }
+}
 
 # Allow API Gateway to access Lambda
 resource "aws_lambda_permission" "api_gw" {
