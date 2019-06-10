@@ -58,60 +58,25 @@ resource "aws_iam_role" "spoke_lambda" {
 EOF
 }
 
-# Created scoped S3 access policy
-# Source: https://www.terraform.io/docs/providers/aws/r/iam_role_policy.html
-resource "aws_iam_policy" "s3_bucket_access" {
-  name        = "s3=${var.s3_bucket_name}"
-  description = "Allow access to ${var.s3_bucket_name}."
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "s3:PutAccountPublicAccessBlock",
-                "s3:GetAccountPublicAccessBlock",
-                "s3:ListAllMyBuckets",
-                "s3:HeadBucket"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor1",
-            "Effect": "Allow",
-            "Action": "s3:*",
-            "Resource": [
-                "arn:aws:s3:::${var.s3_bucket_name}",
-                "arn:aws:s3:::${var.s3_bucket_name}/*"
-            ]
-        }
-    ]
-}
-EOF
-}
-
 # Attach Policies to Role
 # Source: https://www.terraform.io/docs/providers/aws/r/iam_role_policy_attachment.html
 
 # AWSLambdaRole
 resource "aws_iam_role_policy_attachment" "aws_lambda" {
-  role       = "${aws_iam_role.spoke_lambda.name}"
+  role = "${aws_iam_role.spoke_lambda.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
 }
 
 # AWSLambdaVPCAccessExecutionRole
 resource "aws_iam_role_policy_attachment" "aws_lambda_vpc_access_execution" {
-  role       = "${aws_iam_role.spoke_lambda.name}"
+  role = "${aws_iam_role.spoke_lambda.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
 # S3 Bucket Access
 resource "aws_iam_role_policy_attachment" "s3_bucket_access_attach" {
-  role       = "${aws_iam_role.spoke_lambda.name}"
-  policy_arn = "${aws_iam_policy.s3_bucket_access.arn}"
+  role = "${aws_iam_role.spoke_lambda.name}"
+  policy_arn = "${var.s3_bucket_access_role_arn}"
 }
 
 # Inline Policy
@@ -142,35 +107,27 @@ resource "aws_iam_role_policy" "vpc_access_execution" {
 EOF
 }
 
-# Dummy payload
-# Source: https://amido.com/blog/terraform-does-not-need-your-code-to-provision-a-lambda-function/
-
-data "archive_file" "dummy_payload" {
-  type        = "zip"
-  output_path = "${path.module}/lambda_function_payload.zip"
-  source_dir  = "${path.module}/dummy-src"
-}
-
 # Create Lambda function
 # Source: https://www.terraform.io/docs/providers/aws/r/lambda_function.html
 resource "aws_lambda_function" "spoke" {
   function_name = "${var.aws_client_tag}-spoke"
   description   = "Spoke P2P Texting Platform for ${var.client_name_friendly}"
 
-  filename    = "${data.archive_file.dummy_payload.output_path}"
   handler     = "lambda.handler"
+  s3_bucket   = "${var.s3_bucket_name}"
+  s3_key      = "${var.dummy_payload_key}"
   runtime     = "${var.node_runtime}"
   memory_size = "${var.func_memory_mb}"
   timeout     = "${var.lambda_timeout_s}"
 
   role = "${aws_iam_role.spoke_lambda.arn}"
 
-  vpc_config = {
-    subnet_ids         = ["${var.subnet_ids}"]
+  vpc_config {
+    subnet_ids         = var.subnet_ids
     security_group_ids = ["${aws_security_group.lambda.id}"]
   }
 
-  environment = {
+  environment {
     variables = {
       NODE_ENV                     = "production"
       JOBS_SAME_PROCESS            = "1"

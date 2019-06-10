@@ -20,7 +20,7 @@ resource "aws_security_group" "postgres" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Spoke Postgres"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -32,9 +32,9 @@ resource "aws_security_group" "postgres" {
 # Source: https://www.terraform.io/docs/providers/aws/r/db_subnet_group.html
 resource "aws_db_subnet_group" "postgres" {
   name       = "postgres"
-  subnet_ids = ["${var.subnet_ids}"]
+  subnet_ids = var.subnet_ids
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Spoke Postgres"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -81,7 +81,7 @@ resource "aws_rds_cluster" "spoke" {
     min_capacity = "${var.rds_min_capacity}"
     max_capacity = "${var.rds_max_capacity}"
   }
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Spoke Postgres"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"

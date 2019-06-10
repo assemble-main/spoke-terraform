@@ -84,6 +84,15 @@ variable "rds_max_capacity" {
   default     = 256
 }
 
+# -----------------------
+# Elastic Beanstalk
+# -----------------------
+
+variable "ssh_key_name" {
+  type        = "string"
+  description = "Name of SSH Key to use for Elastic Beanstalk EC2 instances."
+}
+
 # ###########################
 # Spoke Environment Variables
 # ###########################

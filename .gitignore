@@ -1,5 +1,7 @@
 # Build artifacts
 build/*
+.deploy
+lambda_function_payload.zip
 
 # Default Logging
 logs/*

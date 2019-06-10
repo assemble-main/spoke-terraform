@@ -37,9 +37,19 @@ variable "subnet_ids" {
   description = "IDs of the subnets the Lambda function should belong to."
 }
 
+variable "s3_bucket_access_role_arn" {
+  type        = "string"
+  description = "The ARN of the role allowing access to the S3 bucket."
+}
+
 variable "s3_bucket_name" {
   type        = "string"
   description = "The name of the S3 bucket where the server bundle resides."
+}
+
+variable "dummy_payload_key" {
+  type        = "string"
+  description = "Object key of the dummy payload to instantiate the Lambda function with."
 }
 
 variable "node_runtime" {

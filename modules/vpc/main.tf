@@ -5,7 +5,7 @@ resource "aws_vpc" "spoke_vpc" {
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Spoke VPC"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -18,7 +18,7 @@ resource "aws_vpc" "spoke_vpc" {
 resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_vpc.spoke_vpc.id}"
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Spoke IGW"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -35,7 +35,7 @@ resource "aws_subnet" "public_a" {
   cidr_block        = "10.0.1.0/24"
   availability_zone = "${var.aws_region}a"
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Public A"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -49,7 +49,7 @@ resource "aws_subnet" "public_b" {
   cidr_block        = "10.0.2.0/24"
   availability_zone = "${var.aws_region}b"
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Public B"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -63,7 +63,7 @@ resource "aws_subnet" "private_a" {
   cidr_block        = "10.0.3.0/24"
   availability_zone = "${var.aws_region}a"
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Private A"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -77,7 +77,7 @@ resource "aws_subnet" "private_b" {
   cidr_block        = "10.0.4.0/24"
   availability_zone = "${var.aws_region}b"
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Private B"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -90,7 +90,7 @@ resource "aws_subnet" "private_b" {
 resource "aws_eip" "lambda_nat" {
   vpc = true
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Lambda NAT EIP"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -106,7 +106,7 @@ resource "aws_nat_gateway" "gw" {
   allocation_id = "${aws_eip.lambda_nat.id}"
   subnet_id     = "${aws_subnet.public_a.id}"
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Lambda NAT"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -129,7 +129,7 @@ resource "aws_route_table" "public" {
     gateway_id = "${aws_internet_gateway.gw.id}"
   }
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Public Route Table"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
@@ -146,7 +146,7 @@ resource "aws_route_table" "private" {
     nat_gateway_id = "${aws_nat_gateway.gw.id}"
   }
 
-  tags {
+  tags = {
     Name               = "${var.client_name_friendly} Private Route Table"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
