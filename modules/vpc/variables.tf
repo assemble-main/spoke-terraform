@@ -22,3 +22,9 @@ variable "aws_stack_tag" {
   description = "The value for AWS cost allocation tag `user:stack`."
   default     = "production"
 }
+
+variable "slash_16_cidr_block" {
+  type        = "string"
+  description = "A /16 CIDR block to use for the VPC."
+  default     = "10.0.0.0/16"
+}

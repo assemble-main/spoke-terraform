@@ -1,7 +1,7 @@
 # Create VPC
 # Source: https://www.terraform.io/docs/providers/aws/r/vpc.html
 resource "aws_vpc" "spoke_vpc" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = "${var.slash_16_cidr_block}"
   enable_dns_support   = true
   enable_dns_hostnames = true
 
@@ -32,7 +32,7 @@ resource "aws_internet_gateway" "gw" {
 # Public A
 resource "aws_subnet" "public_a" {
   vpc_id            = "${aws_vpc.spoke_vpc.id}"
-  cidr_block        = "10.0.1.0/24"
+  cidr_block        = "${cidrsubnet(var.slash_16_cidr_block, 8, 1)}"
   availability_zone = "${var.aws_region}a"
 
   tags = {
@@ -46,7 +46,7 @@ resource "aws_subnet" "public_a" {
 # Public B
 resource "aws_subnet" "public_b" {
   vpc_id            = "${aws_vpc.spoke_vpc.id}"
-  cidr_block        = "10.0.2.0/24"
+  cidr_block        = "${cidrsubnet(var.slash_16_cidr_block, 8, 2)}"
   availability_zone = "${var.aws_region}b"
 
   tags = {
@@ -60,7 +60,7 @@ resource "aws_subnet" "public_b" {
 # Private A
 resource "aws_subnet" "private_a" {
   vpc_id            = "${aws_vpc.spoke_vpc.id}"
-  cidr_block        = "10.0.3.0/24"
+  cidr_block        = "${cidrsubnet(var.slash_16_cidr_block, 8, 3)}"
   availability_zone = "${var.aws_region}a"
 
   tags = {
@@ -74,7 +74,7 @@ resource "aws_subnet" "private_a" {
 # Private B
 resource "aws_subnet" "private_b" {
   vpc_id            = "${aws_vpc.spoke_vpc.id}"
-  cidr_block        = "10.0.4.0/24"
+  cidr_block        = "${cidrsubnet(var.slash_16_cidr_block, 8, 4)}"
   availability_zone = "${var.aws_region}b"
 
   tags = {
