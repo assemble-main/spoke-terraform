@@ -191,7 +191,6 @@ resource "aws_elastic_beanstalk_environment" "spoke_admin" {
   solution_stack_name = "${var.eb_solution_stack_name}"
 
   tags = {
-    Name               = "${var.client_name_friendly} Spoke Admin EB Environment"
     "user:client"      = "${var.aws_client_tag}"
     "user:stack"       = "${var.aws_stack_tag}"
     "user:application" = "spoke"
