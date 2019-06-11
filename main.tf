@@ -218,12 +218,13 @@ module "elastic_beanstalk" {
   vpc_id = "${module.vpc.vpc_id}"
   vpc_subnets = module.vpc.aws_private_subnet_ids
   elb_subnets = module.vpc.aws_public_subnet_ids
-  security_groups = []
 
-  spoke_env = {}
+  spoke_env = {
+    NODE_ENV = "production"
+  }
 }
 
-# Add access from Lambda to Postgres
+# Add access from Elastic Beanstalk to Postgres
 resource "aws_security_group_rule" "allow_eb_postgres" {
   description = "Postgres access from Elastic Beanstalk."
   security_group_id = "${module.postgres.postgres_security_group_id}"
@@ -232,5 +233,5 @@ resource "aws_security_group_rule" "allow_eb_postgres" {
   from_port = 5432
   to_port = 5432
   protocol = "tcp"
-  source_security_group_id = "${module.elastic_beanstalk.eb_security_group_id}"
+  source_security_group_id = "${module.elastic_beanstalk.eb_ec2_security_group_id}"
 }

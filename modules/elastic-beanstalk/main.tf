@@ -56,34 +56,113 @@ resource "aws_iam_role" "beanstalk_ec2" {
 EOF
 }
 
-resource "aws_iam_policy_attachment" "beanstalk_service" {
-  name       = "${var.aws_client_tag}-spoke-elastic-beanstalk-service"
-  roles      = ["${aws_iam_role.beanstalk_service.id}"]
+resource "aws_iam_role_policy_attachment" "beanstalk_service" {
+  role       = "${aws_iam_role.beanstalk_service.id}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
 }
 
-resource "aws_iam_policy_attachment" "beanstalk_service_health" {
-  name       = "${var.aws_client_tag}-spoke-elastic-beanstalk-service-health"
-  roles      = ["${aws_iam_role.beanstalk_service.id}"]
+resource "aws_iam_role_policy_attachment" "beanstalk_service_health" {
+  role       = "${aws_iam_role.beanstalk_service.id}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
 }
 
-resource "aws_iam_policy_attachment" "beanstalk_ec2_web" {
-  name       = "${var.aws_client_tag}-spoke-elastic-beanstalk-ec2-web"
-  roles      = ["${aws_iam_role.beanstalk_ec2.id}"]
+resource "aws_iam_role_policy_attachment" "beanstalk_ec2_web" {
+  role       = "${aws_iam_role.beanstalk_ec2.id}"
   policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
 }
 
-resource "aws_iam_policy_attachment" "beanstalk_ec2_docker" {
-  name       = "${var.aws_client_tag}-spoke-elastic-beanstalk-ec2-docker"
-  roles      = ["${aws_iam_role.beanstalk_ec2.id}"]
+resource "aws_iam_role_policy_attachment" "beanstalk_ec2_worker" {
+  role       = "${aws_iam_role.beanstalk_ec2.id}"
+  policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier"
+}
+
+resource "aws_iam_role_policy_attachment" "beanstalk_ec2_docker" {
+  role       = "${aws_iam_role.beanstalk_ec2.id}"
   policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker"
 }
 
-resource "aws_iam_policy_attachment" "beanstalk_ec2_s3_access" {
-  name       = "${var.aws_client_tag}-spoke-elastic-beanstalk-ec2-s3-access"
-  roles      = ["${aws_iam_role.beanstalk_ec2.id}"]
+resource "aws_iam_role_policy_attachment" "beanstalk_ec2_s3_access" {
+  role       = "${aws_iam_role.beanstalk_ec2.id}"
   policy_arn = "${var.s3_bucket_access_role_arn}"
+}
+
+##################################################
+## Security Groups
+##################################################
+
+# Create security group for Elastic Load Balancer
+# Source: https://www.terraform.io/docs/providers/aws/r/security_group.html
+resource "aws_security_group" "spoke_eb_elb" {
+  name        = "${var.aws_client_tag}-spoke-eb-elb"
+  description = "Allow all inbound HTTP(S) traffic."
+  vpc_id      = "${var.vpc_id}"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTP access from anywhere."
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS access from anywhere."
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name               = "${var.client_name_friendly} Spoke - EB ELB"
+    "user:client"      = "${var.aws_client_tag}"
+    "user:stack"       = "${var.aws_stack_tag}"
+    "user:application" = "spoke"
+  }
+}
+
+# Create security group for EC2 instances
+resource "aws_security_group" "spoke_eb_ec2" {
+  name        = "${var.aws_client_tag}-spoke-eb-ec2"
+  description = "Allow inbound HTTP traffic from load balancer."
+  vpc_id      = "${var.vpc_id}"
+
+  ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = ["${aws_security_group.spoke_eb_elb.id}"]
+    description     = "HTTP access from load balancer."
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "SSH access from anywhere."
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name               = "${var.client_name_friendly} Spoke - EB EC2"
+    "user:client"      = "${var.aws_client_tag}"
+    "user:stack"       = "${var.aws_stack_tag}"
+    "user:application" = "spoke"
+  }
 }
 
 ##################################################
@@ -150,10 +229,11 @@ resource "aws_elastic_beanstalk_environment" "spoke_admin" {
     value     = "${var.ssh_key_name}"
   }
 
+  # Amazon EC2 security groups to assign to the EC2 instances in the Auto Scaling group
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "SecurityGroups"
-    value     = "${join(",", var.security_groups)}"
+    value     = "${aws_security_group.spoke_eb_ec2.id}"
   }
 
   setting {

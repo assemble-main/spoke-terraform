@@ -5,21 +5,6 @@ resource "aws_security_group" "postgres" {
   description = "Allow all inbound Postgres traffic"
   vpc_id      = "${var.vpc_id}"
 
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    self        = true
-    description = "Postgres access from self."
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name               = "${var.client_name_friendly} Spoke Postgres"
     "user:client"      = "${var.aws_client_tag}"
@@ -27,6 +12,30 @@ resource "aws_security_group" "postgres" {
     "user:application" = "spoke"
   }
 }
+
+# Declare ingress/egress outside of main Security Group Definition so we can use individual rule resources elsewhere
+
+resource "aws_security_group_rule" "postgres_self_ingress" {
+  description       = "Postgres access from self."
+  security_group_id = "${aws_security_group.postgres.id}"
+
+  type      = "ingress"
+  from_port = 5432
+  to_port   = 5432
+  protocol  = "tcp"
+  self      = true
+}
+
+resource "aws_security_group_rule" "postgres_self_egress" {
+  security_group_id = "${aws_security_group.postgres.id}"
+
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
 
 # Create RDS Subnet Group
 # Source: https://www.terraform.io/docs/providers/aws/r/db_subnet_group.html

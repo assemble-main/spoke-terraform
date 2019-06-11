@@ -291,8 +291,3 @@ variable "elb_subnets" {
   type        = "list"
   description = "The IDs of the subnet or subnets for the elastic load balancer."
 }
-
-variable "security_groups" {
-  type        = "list"
-  description = "Lists the Amazon EC2 security groups to assign to the EC2 instances in the Auto Scaling group in order to define firewall rules for the instances."
-}
