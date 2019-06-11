@@ -218,53 +218,11 @@ module "lambda" {
   aws_region = "${var.aws_region}"
   vpc_id = "${module.vpc.vpc_id}"
   subnet_ids = module.vpc.aws_private_subnet_ids
+  s3_bucket_name = "${var.s3_bucket_name}"
   dummy_payload_key = "${local.dummy_payload_key}"
   s3_bucket_access_role_arn = "${aws_iam_policy.s3_bucket_access.arn}"
 
-  db_host = "${module.postgres.endpoint}"
-  db_port = "${module.postgres.port}"
-  db_name = "${module.postgres.database_name}"
-  db_user = "${module.postgres.master_username}"
-  db_password = "${var.rds_password}"
-
-  spoke_domain = "${var.spoke_domain}"
-  spoke_suppress_seed = "${var.spoke_suppress_seed}"
-  spoke_suppress_self_invite = "${var.spoke_suppress_self_invite}"
-  spoke_session_secret = "${var.spoke_session_secret}"
-  spoke_timezone = "${var.spoke_timezone}"
-  spoke_lambda_debug = "${var.spoke_lambda_debug}"
-  s3_bucket_name = "${var.s3_bucket_name}"
-
-  spoke_default_service = "${var.spoke_default_service}"
-  spoke_twilio_account_sid = "${var.spoke_twilio_account_sid}"
-  spoke_twilio_auth_token = "${var.spoke_twilio_auth_token}"
-  spoke_twilio_message_service_sid = "${var.spoke_twilio_message_service_sid}"
-  spoke_nexmo_api_key = "${var.spoke_nexmo_api_key}"
-  spoke_nexmo_api_secret = "${var.spoke_nexmo_api_secret}"
-
-  spoke_auth0_domain = "${var.spoke_auth0_domain}"
-  spoke_auth0_client_id = "${var.spoke_auth0_client_id}"
-  spoke_auth0_client_secret = "${var.spoke_auth0_client_secret}"
-
-  spoke_email_from = "${var.spoke_email_from}"
-  spoke_email_host = "${var.spoke_email_host}"
-  spoke_email_host_port = "${var.spoke_email_host_port}"
-  spoke_email_host_user = "${var.spoke_email_host_user}"
-  spoke_email_host_password = "${var.spoke_email_host_password}"
-  spoke_mailgun_api_key = "${var.spoke_mailgun_api_key}"
-  spoke_mailgun_domain = "${var.spoke_mailgun_domain}"
-  spoke_mailgun_public_key = "${var.spoke_mailgun_public_key}"
-  spoke_mailgun_smtp_login = "${var.spoke_mailgun_smtp_login}"
-  spoke_mailgun_smtp_password = "${var.spoke_mailgun_smtp_password}"
-  spoke_mailgun_smtp_port = "${var.spoke_mailgun_smtp_port}"
-  spoke_mailgun_smtp_server = "${var.spoke_mailgun_smtp_server}"
-
-  spoke_action_handlers = "${var.spoke_action_handlers}"
-  spoke_ak_baseurl = "${var.spoke_ak_baseurl}"
-  spoke_ak_secret = "${var.spoke_ak_secret}"
-
-  spoke_rollbar_client_token = "${var.spoke_rollbar_client_token}"
-  spoke_rollbar_endpoint = "${var.spoke_rollbar_endpoint}"
+  spoke_env = local.spoke_env
 }
 
 # API Gateway for Lambda
