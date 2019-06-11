@@ -180,8 +180,36 @@ variable "spoke_nexmo_api_secret" {
 }
 
 # -----------------------
-# Auth0
+# Authentication
 # -----------------------
+
+variable "spoke_passport_strategy" {
+  type        = "string"
+  description = "Passport strategy to use."
+  default     = "auth0"
+}
+
+# Slack
+
+variable "spoke_slack_client_id" {
+  type        = "string"
+  description = "Slack client ID."
+  default     = ""
+}
+
+variable "spoke_slack_client_secret" {
+  type        = "string"
+  description = "Slack client secret."
+  default     = ""
+}
+
+variable "spoke_slack_team_name" {
+  type        = "string"
+  description = "Slack team name."
+  default     = ""
+}
+
+# Auth0
 
 variable "spoke_auth0_domain" {
   type        = "string"
@@ -319,4 +347,58 @@ variable "spoke_rollbar_endpoint" {
   type        = "string"
   description = "Rollbar endpoint."
   default     = "https://api.rollbar.com/api/1/item/"
+}
+
+# ------------------------------
+# External Assignment Management
+# ------------------------------
+
+## Outgoing
+
+variable "spoke_assignment_requested_token" {
+  type        = "string"
+  description = "Bearer token for outgoing assignment requests."
+  default     = ""
+}
+
+variable "spoke_assignment_requested_url" {
+  type        = "string"
+  description = "Initial outgoing assignment request."
+  default     = ""
+}
+
+variable "spoke_assignment_complete_url" {
+  type        = "string"
+  description = "URL to hit when campaign autoassignment completes."
+  default     = ""
+}
+
+## Incoming
+
+variable "spoke_assignment_username" {
+  type        = "string"
+  description = "Basic authentication username for incoming assignment approval requests."
+  default     = ""
+}
+
+variable "spoke_assignment_password" {
+  type        = "string"
+  description = "Basic authentication password for incoming assignment approval requests."
+  default     = ""
+}
+
+# --------------------------------------
+# External Bad Word Flagging Integration
+# --------------------------------------
+
+variable "spoke_bad_word_token" {
+  type        = "string"
+  description = "Bearer token for outgoing bad word notifications."
+  default     = ""
+}
+
+variable "spoke_bad_word_url" {
+  type        = "string"
+  description = "URL for outgoing bad word notifications."
+  default     = ""
 }
