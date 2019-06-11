@@ -359,6 +359,18 @@ resource "aws_elastic_beanstalk_environment" "spoke_admin" {
     value     = "${var.healthreporting}"
   }
 
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "${"LoadBalancerType"}"
+    value     = "${var.load_balancer_type}"
+  }
+
+  setting {
+    namespace = "aws:elb:loadbalancer"
+    name      = "SecurityGroups"
+    value     = "${aws_security_group.spoke_eb_elb.id}"
+  }
+
   # Configure the default listener (port 80) on a classic load balancer.
   setting {
     namespace = "${"aws:elb:listener:80"}"

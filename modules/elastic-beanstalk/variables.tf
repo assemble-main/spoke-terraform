@@ -113,6 +113,12 @@ variable "deployment_policy" {
 # Load Balancing
 # -------------------------------
 
+variable "load_balancer_type" {
+  type        = "string"
+  default     = "application"
+  description = "The type of load balancer for your environment. (classic, application, network)"
+}
+
 variable "port" {
   type        = "string"
   default     = "3000"
