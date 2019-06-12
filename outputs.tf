@@ -5,6 +5,24 @@
 # 
 # Source: https://www.terraform.io/intro/getting-started/outputs.html
 
+# -----------------------
+# DNS
+# -----------------------
+
+output "lambda_uri" {
+  description = "URI for Lambda function."
+  value       = "${module.api_gateway.lambda_domain}"
+}
+
+output "eb_cname" {
+  description = "URI for EB environment."
+  value       = "${module.elastic_beanstalk.eb_env_cname}"
+}
+
+# -----------------------
+# Database
+# -----------------------
+
 output "endpoint" {
   description = "Aurora PostgreSQL DNS endpoint."
   value       = "${module.postgres.endpoint}"

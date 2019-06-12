@@ -235,6 +235,9 @@ module "api_gateway" {
 
   invoke_arn = "${module.lambda.invoke_arn}"
   function_arn = "${module.lambda.function_arn}"
+
+  base_domain = "${var.base_domain}"
+  certificate_arn = "${data.aws_acm_certificate.spoke_certificate.arn}"
 }
 
 # Add access from Lambda to Postgres
@@ -266,7 +269,7 @@ module "elastic_beanstalk" {
   max_instance = "4"
 
   # ELB
-  ssl_certificate_id = "${data.aws_acm_certificate.spoke_certificate.arn}"
+  ssl_certificate_arn = "${data.aws_acm_certificate.spoke_certificate.arn}"
   enable_https = true
   elb_connection_timeout = "120"
 

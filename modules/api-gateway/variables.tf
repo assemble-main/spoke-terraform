@@ -23,3 +23,13 @@ variable "function_arn" {
   type        = "string"
   description = "The gateway's target Lambda function ARN. Example: aws_lambda_function.spoke.arn"
 }
+
+variable "base_domain" {
+  type        = "string"
+  description = "The base domain that Spoke components will be running on. Ex. spoke.client.politicsrewired.dev"
+}
+
+variable "certificate_arn" {
+  type        = "string"
+  description = "ACM Regional Certificate ARN."
+}

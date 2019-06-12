@@ -119,13 +119,7 @@ variable "load_balancer_type" {
   description = "The type of load balancer for your environment. (classic, application, network)"
 }
 
-variable "port" {
-  type        = "string"
-  default     = "3000"
-  description = "The instance port"
-}
-
-variable "ssl_certificate_id" {
+variable "ssl_certificate_arn" {
   type        = "string"
   description = "ARN of an SSL certificate to bind to the listener."
 }

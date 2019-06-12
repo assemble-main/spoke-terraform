@@ -83,3 +83,19 @@ resource "aws_lambda_permission" "api_gw" {
   # within the API Gateway "REST API".
   source_arn = "${aws_api_gateway_deployment.spoke.execution_arn}/*/*"
 }
+
+resource "aws_api_gateway_domain_name" "spoke_lambda" {
+  domain_name              = "lambda.${var.base_domain}"
+  regional_certificate_arn = "${var.certificate_arn}"
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+}
+
+resource "aws_api_gateway_base_path_mapping" "spoke_lambda" {
+  # base_path is ommitted to use root
+  api_id      = "${aws_api_gateway_rest_api.spoke.id}"
+  stage_name  = "${aws_api_gateway_deployment.spoke.stage_name}"
+  domain_name = "${aws_api_gateway_domain_name.spoke_lambda.domain_name}"
+}

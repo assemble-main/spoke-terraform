@@ -370,42 +370,30 @@ resource "aws_elastic_beanstalk_environment" "spoke_admin" {
     value     = "${aws_security_group.spoke_eb_elb.id}"
   }
 
-  # Configure the default listener (port 80) on a classic load balancer.
+  # Configure the default listener (port 80) on application load balancer.
   setting {
-    namespace = "${"aws:elb:listener:80"}"
-    name      = "${"InstancePort"}"
-    value     = "${var.port}"
-  }
-
-  setting {
-    namespace = "${"aws:elb:listener:80"}"
+    namespace = "${"aws:elbv2:listener:80"}"
     name      = "${"ListenerEnabled"}"
     value     = "${var.enable_http}"
   }
 
-  # Configure additional listeners on a classic load balancer.
+  # Configure additional listeners on application load balancer.
   setting {
     namespace = "${"aws:elb:listener:443"}"
-    name      = "${"ListenerProtocol"}"
+    name      = "${"ListenerEnabled"}"
+    value     = "${var.enable_https}"
+  }
+
+  setting {
+    namespace = "${"aws:elbv2:listener:443"}"
+    name      = "${"Protocol"}"
     value     = "${"HTTPS"}"
   }
 
   setting {
     namespace = "${"aws:elb:listener:443"}"
-    name      = "${"InstancePort"}"
-    value     = "${var.port}"
-  }
-
-  setting {
-    namespace = "${"aws:elb:listener:443"}"
-    name      = "${"SSLCertificateId"}"
-    value     = "${var.ssl_certificate_id}"
-  }
-
-  setting {
-    namespace = "${"aws:elb:listener:443"}"
-    name      = "${"ListenerEnabled"}"
-    value     = "${var.enable_https}"
+    name      = "${"SSLCertificateArns"}"
+    value     = "${var.ssl_certificate_arn}"
   }
 
   # Node.js Platform Options
