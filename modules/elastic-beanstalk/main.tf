@@ -184,6 +184,7 @@ resource "aws_elastic_beanstalk_application" "spoke_admin" {
 
 # Create EB Environment
 # Source: https://www.terraform.io/docs/providers/aws/r/elastic_beanstalk_environment.html
+# Settings Reference: https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html#command-options-general-elbv2-listener
 resource "aws_elastic_beanstalk_environment" "spoke_admin" {
   name                = "${var.aws_client_tag}-SpokeAdmin-production"
   description         = "Production Spoke admin version."
