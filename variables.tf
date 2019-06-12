@@ -135,6 +135,12 @@ variable "spoke_lambda_debug" {
   default     = "0"
 }
 
+variable "spoke_external_faq_url" {
+  type        = "string"
+  description = "When set, the 'Have you checked the FAQ?'' text in the Escalate Conversation flow will link to this page. When unset, the text will be static."
+  default     = ""
+}
+
 # -----------------------
 # SMS Providers
 # -----------------------

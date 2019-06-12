@@ -22,6 +22,7 @@ locals {
     DST_REFERENCE_TIMEZONE       = "${var.spoke_timezone}"
     TZ                           = "${var.spoke_timezone}"
     APOLLO_OPTICS_KEY            = ""
+    EXTERNAL_FAQ_URL             = "${var.spoke_external_faq_url}"
 
     # AWS
     LAMBDA_DEBUG_LOG     = "${var.spoke_lambda_debug}"
