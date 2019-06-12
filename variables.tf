@@ -165,6 +165,12 @@ variable "spoke_twilio_message_service_sid" {
   default     = ""
 }
 
+variable "spoke_skip_twilio_validation" {
+  type        = "string"
+  description = "Whether to skip validating inbound requests from Twilio."
+  default     = "false"
+}
+
 ## Nexmo
 
 variable "spoke_nexmo_api_key" {
