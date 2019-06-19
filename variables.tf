@@ -245,6 +245,12 @@ variable "spoke_auth0_client_secret" {
 # Email
 # -----------------------
 
+variable "spoke_email_from" {
+  type        = "string"
+  description = "Address to send emails from."
+  default     = ""
+}
+
 ## SMTP
 
 variable "spoke_email_host" {
@@ -268,12 +274,6 @@ variable "spoke_email_host_user" {
 variable "spoke_email_host_password" {
   type        = "string"
   description = "Email host password."
-  default     = ""
-}
-
-variable "spoke_email_from" {
-  type        = "string"
-  description = "Address to send emails from."
   default     = ""
 }
 
