@@ -171,6 +171,12 @@ variable "spoke_twilio_message_service_sid" {
   default     = ""
 }
 
+variable "spoke_twilio_validation_host" {
+  type        = "string"
+  description = "Allow overriding the host Spoke validates Twilio headers against."
+  default     = ""
+}
+
 variable "spoke_skip_twilio_validation" {
   type        = "string"
   description = "Whether to skip validating inbound requests from Twilio."

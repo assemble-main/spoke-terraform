@@ -69,6 +69,7 @@ locals {
     TWILIO_APPLICATION_SID     = "${var.spoke_twilio_message_service_sid}"
     TWILIO_AUTH_TOKEN          = "${var.spoke_twilio_auth_token}"
     TWILIO_STATUS_CALLBACK_URL = "https://${var.spoke_domain}/twilio-message-report"
+    TWILIO_VALIDATION_HOST     = "${var.spoke_twilio_validation_host}"
     SKIP_TWILIO_VALIDATION     = "${var.spoke_skip_twilio_validation}"
 
     # Rollbar
