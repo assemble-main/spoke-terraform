@@ -72,6 +72,14 @@ variable "rds_password" {
   description = "The password for the Postgres instance user."
 }
 
+variable "engine_mode" {
+  type        = "string"
+  description = "The database engine mode. Valid values: global, parallelquery, provisioned, and serverless"
+  default     = "serverless"
+}
+
+# Serverless
+
 variable "serverless_min_capacity" {
   type        = "string"
   description = "Minimum ACU count for PostgreSQL database."

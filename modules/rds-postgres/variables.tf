@@ -32,6 +32,12 @@ variable "subnet_ids" {
 # Database Variables
 # -----------------------
 
+variable "engine_mode" {
+  type        = "string"
+  description = "The database engine mode. Valid values: global, parallelquery, provisioned, and serverless"
+  default     = "serverless"
+}
+
 variable "rds_dbname" {
   type        = "string"
   description = "The DB name for the Postgres instance."

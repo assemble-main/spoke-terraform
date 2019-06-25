@@ -56,7 +56,7 @@ resource "aws_db_subnet_group" "postgres" {
 resource "aws_rds_cluster" "spoke" {
   cluster_identifier     = "${var.aws_client_tag}-spokedb"
   engine                 = "aurora-postgresql"
-  engine_mode            = "serverless"
+  engine_mode            = "${var.engine_mode}"
   db_subnet_group_name   = "${aws_db_subnet_group.postgres.name}"
   vpc_security_group_ids = ["${aws_security_group.postgres.id}"]
   copy_tags_to_snapshot  = true
@@ -83,13 +83,14 @@ resource "aws_rds_cluster" "spoke" {
   preferred_backup_window      = "06:00-11:00"         # UTC
   preferred_maintenance_window = "sat:05:00-sat:05:30" # UTC
 
-  # Scaling configuration
+  # Scaling configuration (serverless mode only)
 
   scaling_configuration {
-    auto_pause   = false
-    min_capacity = "${var.serverless_min_capacity}"
-    max_capacity = "${var.serverless_max_capacity}"
+    auto_pause   = "${var.engine_mode == "serverless" ? false : null}"
+    min_capacity = "${var.engine_mode == "serverless" ? var.serverless_min_capacity : null}"
+    max_capacity = "${var.engine_mode == "serverless" ? var.serverless_max_capacity : null}"
   }
+
   tags = {
     Name               = "${var.client_name_friendly} Spoke Postgres"
     "user:client"      = "${var.aws_client_tag}"
