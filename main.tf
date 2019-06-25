@@ -206,8 +206,23 @@ module "postgres" {
   rds_dbname = "${var.rds_dbname}"
   rds_username = "${var.rds_username}"
   rds_password = "${var.rds_password}"
-  rds_min_capacity = "${var.rds_min_capacity}"
-  rds_max_capacity = "${var.rds_max_capacity}"
+  engine_mode = "${var.engine_mode}"
+  copy_tags_to_snapshot = "${var.copy_tags_to_snapshot}"
+  storage_encrypted = "${var.storage_encrypted}"
+  deletion_protection = "${var.deletion_protection}"
+  skip_final_snapshot = "${var.skip_final_snapshot}"
+  backup_retention_period = "${var.backup_retention_period}"
+  preferred_backup_window = "${var.preferred_backup_window}"
+  preferred_maintenance_window = "${var.preferred_maintenance_window}"
+  serverless_min_capacity = "${var.serverless_min_capacity}"
+  serverless_max_capacity = "${var.serverless_max_capacity}"
+
+  engine_version = "${var.engine_version}"
+  db_cluster_parameter_group_name = "${var.db_cluster_parameter_group_name}"
+  db_parameter_group_name = "${var.db_parameter_group_name}"
+  aurora_instance_count = "${var.aurora_instance_count}"
+  aurora_instance_class = "${var.aurora_instance_class}"
+  aurora_publicly_accessible = "${var.aurora_publicly_accessible}"
 }
 
 # Lambda function
