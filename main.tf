@@ -310,3 +310,18 @@ resource "aws_security_group_rule" "allow_eb_postgres" {
   protocol = "tcp"
   source_security_group_id = "${module.elastic_beanstalk.eb_ec2_security_group_id}"
 }
+
+module "vpn" {
+  source = "./modules/vpn"
+
+  client_name_friendly = "${var.client_name_friendly}"
+  aws_client_tag = "${var.aws_client_tag}"
+  aws_stack_tag = "${var.aws_stack_tag}"
+  vpc_id = "${module.vpc.vpc_id}"
+  subnet_id = "${module.vpc.aws_public_subnet_ids[0]}"
+
+  # Override AMI with OpenVPN BYOL AMI
+  ami = "ami-090f10efc254eaf55"
+  instance_type = "t2.micro"
+  ssh_key_name = "${var.ssh_key_name}"
+}
