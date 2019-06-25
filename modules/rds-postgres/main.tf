@@ -85,10 +85,14 @@ resource "aws_rds_cluster" "spoke" {
 
   # Scaling configuration (serverless mode only)
 
-  scaling_configuration {
-    auto_pause   = "${var.engine_mode == "serverless" ? false : null}"
-    min_capacity = "${var.engine_mode == "serverless" ? var.serverless_min_capacity : null}"
-    max_capacity = "${var.engine_mode == "serverless" ? var.serverless_max_capacity : null}"
+  dynamic "scaling_configuration" {
+    for_each = "${var.engine_mode == "serverless" ? ["element"] : []}"
+
+    content {
+      auto_pause   = false
+      min_capacity = "${var.serverless_min_capacity}"
+      max_capacity = "${var.serverless_max_capacity}"
+    }
   }
 
   tags = {
