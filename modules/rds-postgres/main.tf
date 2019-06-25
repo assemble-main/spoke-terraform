@@ -59,12 +59,12 @@ resource "aws_rds_cluster" "spoke" {
   engine_mode            = "${var.engine_mode}"
   db_subnet_group_name   = "${aws_db_subnet_group.postgres.name}"
   vpc_security_group_ids = ["${aws_security_group.postgres.id}"]
-  copy_tags_to_snapshot  = true
-  storage_encrypted      = true
+  copy_tags_to_snapshot  = "${var.copy_tags_to_snapshot}"
+  storage_encrypted      = "${var.storage_encrypted}"
 
   # TODO - Unsure of what to set these to for PostgreSQL Serverless
-  # engine_version                  = ""
-  # db_cluster_parameter_group_name = ""
+  engine_version                  = "${var.engine_mode == "provisioned" ? var.engine_version : null}"
+  db_cluster_parameter_group_name = "${var.db_cluster_parameter_group_name}"
 
   database_name   = "${var.rds_dbname}"
   master_username = "${var.rds_username}"
@@ -72,16 +72,16 @@ resource "aws_rds_cluster" "spoke" {
 
   # Deletion Behavior
 
-  deletion_protection       = true
-  skip_final_snapshot       = false
+  deletion_protection       = "${var.deletion_protection}"
+  skip_final_snapshot       = "${var.skip_final_snapshot}"
   final_snapshot_identifier = "${var.aws_client_tag}-spokedb-final-snapshot"
 
   # Maintenance
 
   # enabled_cloudwatch_logs_exports = ["slowquery"]    # Not supported by Aurora Serverless at the moment
-  backup_retention_period      = 5
-  preferred_backup_window      = "06:00-11:00"         # UTC
-  preferred_maintenance_window = "sat:05:00-sat:05:30" # UTC
+  backup_retention_period      = "${var.backup_retention_period}"
+  preferred_backup_window      = "${var.preferred_backup_window}"
+  preferred_maintenance_window = "${var.preferred_maintenance_window}"
 
   # Scaling configuration (serverless mode only)
 

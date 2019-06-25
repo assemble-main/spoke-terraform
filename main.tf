@@ -207,8 +207,17 @@ module "postgres" {
   rds_username = "${var.rds_username}"
   rds_password = "${var.rds_password}"
   engine_mode = "${var.engine_mode}"
+  copy_tags_to_snapshot = "${var.copy_tags_to_snapshot}"
+  storage_encrypted = "${var.storage_encrypted}"
+  deletion_protection = "${var.deletion_protection}"
+  skip_final_snapshot = "${var.skip_final_snapshot}"
+  backup_retention_period = "${var.backup_retention_period}"
+  preferred_backup_window = "${var.preferred_backup_window}"
+  preferred_maintenance_window = "${var.preferred_maintenance_window}"
   serverless_min_capacity = "${var.serverless_min_capacity}"
   serverless_max_capacity = "${var.serverless_max_capacity}"
+  engine_version = "${var.engine_version}"
+  db_cluster_parameter_group_name = "${var.db_cluster_parameter_group_name}"
 }
 
 # Lambda function
