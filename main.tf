@@ -202,7 +202,7 @@ module "postgres" {
   aws_client_tag = "${var.aws_client_tag}"
   aws_stack_tag = "${var.aws_stack_tag}"
   vpc_id = "${module.vpc.vpc_id}"
-  subnet_ids = module.vpc.aws_public_subnet_ids
+  subnet_ids = "${module.vpc.aws_public_subnet_ids}"
   rds_dbname = "${var.rds_dbname}"
   rds_username = "${var.rds_username}"
   rds_password = "${var.rds_password}"
@@ -220,12 +220,12 @@ module "lambda" {
 
   aws_region = "${var.aws_region}"
   vpc_id = "${module.vpc.vpc_id}"
-  subnet_ids = module.vpc.aws_private_subnet_ids
+  subnet_ids = "${module.vpc.aws_private_subnet_ids}"
   s3_bucket_name = "${var.s3_bucket_name}"
   dummy_payload_key = "${local.dummy_payload_key}"
   s3_bucket_access_role_arn = "${aws_iam_policy.s3_bucket_access.arn}"
 
-  spoke_env = local.spoke_env
+  spoke_env = "${local.spoke_env}"
 }
 
 # API Gateway for Lambda
@@ -278,10 +278,10 @@ module "elastic_beanstalk" {
 
   # Security
   vpc_id = "${module.vpc.vpc_id}"
-  vpc_subnets = module.vpc.aws_private_subnet_ids
-  elb_subnets = module.vpc.aws_public_subnet_ids
+  vpc_subnets = "${module.vpc.aws_private_subnet_ids}"
+  elb_subnets = "${module.vpc.aws_public_subnet_ids}"
 
-  spoke_env = local.spoke_env
+  spoke_env = "${local.spoke_env}"
 }
 
 # Add access from Elastic Beanstalk to Postgres
