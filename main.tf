@@ -126,12 +126,9 @@ resource "aws_s3_bucket" "spoke_bucket" {
   bucket = "${var.s3_bucket_name}"
   acl    = "private"
 
-  tags = {
-    Name               = "${var.client_name_friendly} Spoke Bucket"
-    "user:client"      = "${var.aws_client_tag}"
-    "user:stack"       = "${var.aws_stack_tag}"
-    "user:application" = "spoke"
-  }
+  tags = "${merge(var.cost_allocation_tags, {
+    Name = "${var.client_name_friendly} Spoke Bucket"
+  })}"
 }
 
 # Created scoped S3 access policy

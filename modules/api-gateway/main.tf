@@ -65,11 +65,7 @@ resource "aws_api_gateway_stage" "spoke_latest" {
   rest_api_id   = "${aws_api_gateway_rest_api.spoke.id}"
   deployment_id = "${aws_api_gateway_deployment.spoke.id}"
 
-  tags = {
-    "user:client"      = "${var.aws_client_tag}"
-    "user:stack"       = "${var.aws_stack_tag}"
-    "user:application" = "spoke"
-  }
+  tags = "${var.cost_allocation_tags}"
 }
 
 # Allow API Gateway to access Lambda

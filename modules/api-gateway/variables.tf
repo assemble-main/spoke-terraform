@@ -8,6 +8,12 @@ variable "aws_client_tag" {
   description = "The value for AWS cost allocation tag `user:client`."
 }
 
+variable "cost_allocation_tags" {
+  type        = "map"
+  description = "Any cost allocation tags to use. These will be applied to all resources that support cost allocation tags."
+  default     = {}
+}
+
 variable "aws_stack_tag" {
   type        = "string"
   description = "The value for AWS cost allocation tag `user:stack`."

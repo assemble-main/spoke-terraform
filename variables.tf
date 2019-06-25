@@ -32,6 +32,12 @@ variable "base_domain" {
 # Billing
 # -----------------------
 
+variable "cost_allocation_tags" {
+  type        = "map"
+  description = "Any cost allocation tags to use. These will be applied to all resources that support cost allocation tags."
+  default     = {}
+}
+
 variable "aws_client_tag" {
   type        = "string"
   description = "The value for AWS cost allocation tag `user:client`."
