@@ -40,7 +40,7 @@ resource "aws_security_group_rule" "postgres_self_egress" {
 # Create RDS Subnet Group
 # Source: https://www.terraform.io/docs/providers/aws/r/db_subnet_group.html
 resource "aws_db_subnet_group" "postgres" {
-  name       = "postgres"
+  name       = "${var.aws_client_tag}-postgres"
   subnet_ids = var.subnet_ids
 
   tags = {
