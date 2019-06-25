@@ -87,8 +87,8 @@ resource "aws_rds_cluster" "spoke" {
 
   scaling_configuration {
     auto_pause   = false
-    min_capacity = "${var.rds_min_capacity}"
-    max_capacity = "${var.rds_max_capacity}"
+    min_capacity = "${var.serverless_min_capacity}"
+    max_capacity = "${var.serverless_max_capacity}"
   }
   tags = {
     Name               = "${var.client_name_friendly} Spoke Postgres"

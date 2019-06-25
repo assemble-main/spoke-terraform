@@ -206,8 +206,8 @@ module "postgres" {
   rds_dbname = "${var.rds_dbname}"
   rds_username = "${var.rds_username}"
   rds_password = "${var.rds_password}"
-  rds_min_capacity = "${var.rds_min_capacity}"
-  rds_max_capacity = "${var.rds_max_capacity}"
+  serverless_min_capacity = "${var.serverless_min_capacity}"
+  serverless_max_capacity = "${var.serverless_min_capacity}"
 }
 
 # Lambda function

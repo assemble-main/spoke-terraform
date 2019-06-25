@@ -47,13 +47,15 @@ variable "rds_password" {
   description = "The password for the Postgres instance user."
 }
 
-variable "rds_min_capacity" {
+# Serverless
+
+variable "serverless_min_capacity" {
   type        = "string"
   description = "Minimum ACU count for PostgreSQL database."
   default     = 8
 }
 
-variable "rds_max_capacity" {
+variable "serverless_max_capacity" {
   type        = "string"
   description = "Minimum ACU count for PostgreSQL database."
   default     = 256
