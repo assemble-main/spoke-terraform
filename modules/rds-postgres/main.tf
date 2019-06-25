@@ -85,8 +85,9 @@ resource "aws_rds_cluster" "spoke" {
 
   # Scaling configuration (serverless mode only)
 
+  # Hack-ey way to make scaling_configuration block optional
   dynamic "scaling_configuration" {
-    for_each = "${var.engine_mode == "serverless" ? ["element"] : []}"
+    for_each = "${var.engine_mode == "serverless" ? ["create-the-block"] : []}"
 
     content {
       auto_pause   = false
