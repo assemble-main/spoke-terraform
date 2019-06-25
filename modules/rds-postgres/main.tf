@@ -51,7 +51,7 @@ resource "aws_db_subnet_group" "postgres" {
   }
 }
 
-# Create Serverless Postgres cluster
+# Create Aurora Postgres cluster
 # Source: https://www.terraform.io/docs/providers/aws/r/rds_cluster.html
 resource "aws_rds_cluster" "spoke" {
   cluster_identifier     = "${var.aws_client_tag}-spokedb"
@@ -102,4 +102,19 @@ resource "aws_rds_cluster" "spoke" {
     "user:stack"       = "${var.aws_stack_tag}"
     "user:application" = "spoke"
   }
+}
+
+# Create Aurora Postgres cluster instances
+# Source: https://www.terraform.io/docs/providers/aws/r/rds_cluster_instance.html
+resource "aws_rds_cluster_instance" "spoke_cluster_instances" {
+  count                   = "${var.engine_mode == "provisioned" ? var.aurora_instance_count : 0}"
+  identifier              = "${var.aws_client_tag}-spokedb-${count.index}"
+  cluster_identifier      = "${aws_rds_cluster.spoke.id}"
+  engine                  = "aurora-postgresql"
+  engine_version          = "${var.engine_mode == "provisioned" ? var.engine_version : null}"
+  db_parameter_group_name = "${var.db_parameter_group_name}"
+  instance_class          = "${var.aurora_instance_class}"
+
+  publicly_accessible  = "${var.aurora_publicly_accessible}"
+  db_subnet_group_name = "${aws_db_subnet_group.postgres.name}"
 }

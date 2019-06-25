@@ -124,3 +124,27 @@ variable "db_cluster_parameter_group_name" {
   description = "A cluster parameter group to associate with the cluster."
   default     = "default.aurora-postgresql10"
 }
+
+variable "db_parameter_group_name" {
+  type        = "string"
+  description = "A parameter group to associate with cluster instances."
+  default     = "default.aurora-postgresql10"
+}
+
+variable "aurora_instance_count" {
+  type        = "string"
+  description = "The number of DB instances to create in the cluster."
+  default     = 1
+}
+
+variable "aurora_instance_class" {
+  type        = "string"
+  description = "The instance class to use. For details on CPU and memory, see Scaling Aurora DB Instances. Aurora uses db.* instance classes/types."
+  default     = "db.t3.medium"
+}
+
+variable "aurora_publicly_accessible" {
+  type        = "string"
+  description = "Bool to control if instance is publicly accessible. Default true."
+  default     = true
+}

@@ -216,8 +216,13 @@ module "postgres" {
   preferred_maintenance_window = "${var.preferred_maintenance_window}"
   serverless_min_capacity = "${var.serverless_min_capacity}"
   serverless_max_capacity = "${var.serverless_max_capacity}"
+
   engine_version = "${var.engine_version}"
   db_cluster_parameter_group_name = "${var.db_cluster_parameter_group_name}"
+  db_parameter_group_name = "${var.db_parameter_group_name}"
+  aurora_instance_count = "${var.aurora_instance_count}"
+  aurora_instance_class = "${var.aurora_instance_class}"
+  aurora_publicly_accessible = "${var.aurora_publicly_accessible}"
 }
 
 # Lambda function
