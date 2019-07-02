@@ -23,6 +23,11 @@ output "eb_cname" {
 # Database
 # -----------------------
 
+output "certificate_arn" {
+  description = "The ARN of the certificate to use."
+  value       = "${data.aws_acm_certificate.spoke_certificate.arn}"
+}
+
 output "endpoint" {
   description = "Aurora PostgreSQL DNS endpoint."
   value       = "${module.postgres.endpoint}"
