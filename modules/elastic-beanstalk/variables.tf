@@ -41,7 +41,7 @@ variable "spoke_env" {
 
 variable "eb_solution_stack_name" {
   type        = "string"
-  default     = "64bit Amazon Linux 2018.03 v4.8.3 running Node.js"
+  default     = "64bit Amazon Linux 2018.03 v4.9.2 running Node.js"
   description = "The Elastic Beanstalk solution stack name"
 }
 

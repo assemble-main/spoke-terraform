@@ -183,6 +183,12 @@ variable "ssh_key_name" {
   description = "Name of SSH Key to use for Elastic Beanstalk EC2 instances."
 }
 
+variable "eb_solution_stack_name" {
+  type        = "string"
+  default     = "64bit Amazon Linux 2018.03 v4.9.2 running Node.js"
+  description = "The Elastic Beanstalk solution stack name"
+}
+
 # ###########################
 # Spoke Environment Variables
 # ###########################

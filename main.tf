@@ -280,6 +280,8 @@ module "elastic_beanstalk" {
 
   s3_bucket_access_role_arn = "${aws_iam_policy.s3_bucket_access.arn}"
 
+  eb_solution_stack_name = "${var.eb_solution_stack_name}"
+
   # Instance settings
   instance_type = "t3.small"
   ssh_key_name = "${var.ssh_key_name}"
