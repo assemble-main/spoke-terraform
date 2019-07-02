@@ -47,18 +47,6 @@ resource "aws_api_gateway_integration" "lambda_root" {
   uri                     = "${var.invoke_arn}"
 }
 
-# Gateway Deployment - activate the above configuration
-resource "aws_api_gateway_deployment" "spoke" {
-  depends_on = [
-    "aws_api_gateway_integration.lambda",
-    "aws_api_gateway_integration.lambda_root",
-    "aws_api_gateway_stage.spoke_prod"
-  ]
-
-  rest_api_id = "${aws_api_gateway_rest_api.spoke.id}"
-  stage_name  = "prod"
-}
-
 # Create named stage with tags for Spoke
 # Source: https://www.terraform.io/docs/providers/aws/r/api_gateway_stage.html
 resource "aws_api_gateway_stage" "spoke_prod" {
@@ -71,6 +59,17 @@ resource "aws_api_gateway_stage" "spoke_prod" {
     "user:stack"       = "${var.aws_stack_tag}"
     "user:application" = "spoke"
   }
+}
+
+# Gateway Deployment - activate the above configuration
+# See: https://github.com/terraform-providers/terraform-provider-aws/issues/2918
+resource "aws_api_gateway_deployment" "spoke" {
+  depends_on = [
+    "aws_api_gateway_integration.lambda",
+    "aws_api_gateway_integration.lambda_root"
+  ]
+
+  rest_api_id = "${aws_api_gateway_rest_api.spoke.id}"
 }
 
 # Allow API Gateway to access Lambda
