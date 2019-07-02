@@ -55,13 +55,13 @@ resource "aws_api_gateway_deployment" "spoke" {
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.spoke.id}"
-  stage_name  = "latest"
+  stage_name  = "prod"
 }
 
 # Create named stage with tags for Spoke
 # Source: https://www.terraform.io/docs/providers/aws/r/api_gateway_stage.html
-resource "aws_api_gateway_stage" "spoke_latest" {
-  stage_name    = "latest"
+resource "aws_api_gateway_stage" "spoke_prod" {
+  stage_name    = "prod"
   rest_api_id   = "${aws_api_gateway_rest_api.spoke.id}"
   deployment_id = "${aws_api_gateway_deployment.spoke.id}"
 
