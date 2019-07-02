@@ -359,42 +359,59 @@ resource "aws_elastic_beanstalk_environment" "spoke_admin" {
     value     = "${var.healthreporting}"
   }
 
+  # Application Load Balancer
+
   setting {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "${"LoadBalancerType"}"
-    value     = "${var.load_balancer_type}"
+    value     = "application"
   }
 
   setting {
-    namespace = "aws:elb:loadbalancer"
+    namespace = "aws:elbv2:loadbalancer"
     name      = "SecurityGroups"
     value     = "${aws_security_group.spoke_eb_elb.id}"
   }
 
+  # From: https://github.com/cloudposse/terraform-aws-elastic-beanstalk-environment/blob/master/main.tf#L631-L635
+  # setting {
+  #  namespace = "aws:elbv2:loadbalancer"
+  #  name      = "ManagedSecurityGroup"
+  #  value     = "${var.loadbalancer_managed_security_group}"
+  # }
+
   # Configure the default listener (port 80) on application load balancer.
+
   setting {
-    namespace = "${"aws:elbv2:listener:80"}"
+    namespace = "${"aws:elbv2:listener:default"}"
     name      = "${"ListenerEnabled"}"
     value     = "${var.enable_http}"
   }
 
   # Configure additional listeners on application load balancer.
+
   setting {
-    namespace = "${"aws:elb:listener:443"}"
-    name      = "${"ListenerEnabled"}"
+    namespace = "aws:elbv2:listener:443"
+    name      = "ListenerEnabled"
     value     = "${var.enable_https}"
   }
 
   setting {
-    namespace = "${"aws:elbv2:listener:443"}"
-    name      = "${"Protocol"}"
-    value     = "${"HTTPS"}"
+    namespace = "aws:elbv2:listener:443"
+    name      = "Protocol"
+    value     = "HTTPS"
   }
 
   setting {
-    namespace = "${"aws:elb:listener:443"}"
-    name      = "${"SSLCertificateArns"}"
+    namespace = "aws:elbv2:listener:443"
+    name      = "SSLCertificateArns"
     value     = "${var.ssl_certificate_arn}"
+  }
+
+  setting {
+    namespace = "aws:elbv2:listener:443"
+    name      = "SSLPolicy"
+    value     = "${var.loadbalancer_ssl_policy}"
   }
 
   # Node.js Platform Options

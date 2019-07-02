@@ -288,9 +288,10 @@ module "elastic_beanstalk" {
   min_instance = "1"
   max_instance = "4"
 
-  # ELB
+  # Elastic Load Balancing
   ssl_certificate_arn = "${data.aws_acm_certificate.spoke_certificate.arn}"
-  enable_https = true
+  loadbalancer_ssl_policy = "${var.loadbalancer_ssl_policy}"
+  enable_https = "${var.enable_https}"
   elb_connection_timeout = "120"
 
   # Security

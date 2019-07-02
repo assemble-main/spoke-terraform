@@ -113,10 +113,11 @@ variable "deployment_policy" {
 # Load Balancing
 # -------------------------------
 
-variable "load_balancer_type" {
+# From: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies
+variable "loadbalancer_ssl_policy" {
   type        = "string"
-  default     = "application"
-  description = "The type of load balancer for your environment. (classic, application, network)"
+  description = "Specify a security policy to apply to the listener. This option is only applicable to environments with an application load balancer."
+  default     = "ELBSecurityPolicy-2016-08"
 }
 
 variable "ssl_certificate_arn" {

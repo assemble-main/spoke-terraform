@@ -183,6 +183,18 @@ variable "ssh_key_name" {
   description = "Name of SSH Key to use for Elastic Beanstalk EC2 instances."
 }
 
+variable "enable_https" {
+  type        = "string"
+  default     = "true"
+  description = "Enable or disable HTTPS connection on port 443."
+}
+
+variable "loadbalancer_ssl_policy" {
+  type        = "string"
+  description = "Specify a security policy to apply to the listener. This option is only applicable to environments with an application load balancer."
+  default     = "ELBSecurityPolicy-2016-08"
+}
+
 variable "eb_solution_stack_name" {
   type        = "string"
   default     = "64bit Amazon Linux 2018.03 v4.9.2 running Node.js"
