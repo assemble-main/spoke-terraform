@@ -202,7 +202,7 @@ module "postgres" {
   aws_client_tag = "${var.aws_client_tag}"
   aws_stack_tag = "${var.aws_stack_tag}"
   vpc_id = "${module.vpc.vpc_id}"
-  subnet_ids = "${module.vpc.aws_public_subnet_ids}"
+  subnet_ids = "${(var.engine_mode == "provisioned" && var.aurora_publicly_accessible) ? module.vpc.aws_public_subnet_ids : module.vpc.aws_private_subnet_ids}"
   rds_dbname = "${var.rds_dbname}"
   rds_username = "${var.rds_username}"
   rds_password = "${var.rds_password}"
@@ -309,4 +309,18 @@ resource "aws_security_group_rule" "allow_eb_postgres" {
   to_port = 5432
   protocol = "tcp"
   source_security_group_id = "${module.elastic_beanstalk.eb_ec2_security_group_id}"
+}
+
+# If public, allow access from anywhere to Postgres
+resource "aws_security_group_rule" "allow_public_postgres" {
+  count = "${(var.engine_mode == "provisioned" && var.aurora_publicly_accessible) ? 1 : 0}"
+  description = "Postgres access from anywhere."
+  security_group_id = "${module.postgres.postgres_security_group_id}"
+
+
+  type = "ingress"
+  from_port = 5432
+  to_port = 5432
+  protocol = "tcp"
+  cidr_blocks = "0.0.0.0/0"
 }
